@@ -1,18 +1,56 @@
 #!/bin/bash -x
 
 echo "Welcome to Flip coin simulator."
-declare -A dictFlip
-for (( i=0; i<10; i++ ))
+declare -A dictSinglet
+read -p "Enter Singlet flip value: " singletFlips
+for (( i=0; i<$singletFlips; i++ ))
 do
-	flipCoin=$((RANDOM%2))
-	if [[ $flipCoin -eq 0 ]]
+	coinside=""
+	randomSinglet=$((RANDOM%2))
+	if [[ $randomSinglet -eq 0 ]]
 	then
-		dictFlip[heads]=$((${dictFlip[heads]}+1))
+		dictSinglet[H]=$((${dictSinglet[H]}+1))
 	else
-		dictFlip[tails]=$((${dictFlip[tails]}+1))
+		dictSinglet[T]=$((${dictSinglet[T]}+1))
 	fi
 done
-echo "${!dictFlip[@]} : ${dictFlip[@]}"
+echo "SingletKey :${!dictSinglet[@]} : SingletValue:${dictSinglet[@]}"
+headPercentage=$((${dictSinglet[H]}*100/i))
+tailPercentage=$((${dictSinglet[T]}*100/i))
 
-headPercentage=$((${dictFlip[heads]}*100/i))
-tailPercentage=$((${dictFlip[tails]}*100/i))
+
+declare -A dictDoublet
+declare -A arrDoublet
+function percentage()
+{
+	local v=$1
+	coinPercent=$((${dictDoublet[$v]}*100/$doubletFlips))
+	arrDoublet[$v]=$coinPercent
+}
+
+function flipSimulator()
+{
+	for (( i=1; i<=$1; i++ ))
+	do
+		coinFlip=""
+		for (( j=1; j<=$2; j++ ))
+		do
+			randomCoin=$((RANDOM%2))
+			if [[ $randomCoin -eq 0 ]]
+			then
+				coinFlip+="H"
+			else
+				coinFlip+="T"
+			fi
+		done
+		dictDoublet[$coinFlip]=$((${dictDoublet[$coinFlip]}+1))
+		percentage $coinFlip
+	done
+}
+
+echo "Doublet :"
+DOUBLET=2
+read -p "Enter  flips for doublet: " doubletFlips
+flipSimulator $doubletFlips $DOUBLET
+echo "Key :${!dictDoublet[@]} Value:${dictDoublet[@]}"
+echo "Key:${!arrDoublet[@]}  Percentage: ${arrDoublet[@]}"
